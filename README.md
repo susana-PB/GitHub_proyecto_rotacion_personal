@@ -57,6 +57,7 @@ por qué las personas permanecen o abandonan la organización.
 
     project/
      ├── data/
+     ├── docs/
      ├── notebooks/
      ├── src/
      └── README.md
