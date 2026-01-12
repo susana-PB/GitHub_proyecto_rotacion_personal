@@ -1,0 +1,20 @@
+{
+  "modelo": "Random Forest Mejorado",
+  "umbral_recomendado": 0.35,
+  "recall_esperado": 0.787,
+  "precision_esperada": 0.336,
+  "alertas_esperadas": 110,
+  "porcentaje_plantilla": 0.374,
+  "falsos_negativos_esperados": 10,
+  "caracteristicas": 48,
+  "fecha_entrenamiento": "20251229_203905",
+  "hiperparametros": {
+    "n_estimators": 200,
+    "max_depth": 15,
+    "min_samples_split": 20,
+    "min_samples_leaf": 10,
+    "max_features": "sqrt",
+    "class_weight": "balanced"
+  },
+  "interpretacion_rrhh": "Detecta 79% de casos con intervenci\u00f3n en 37% de plantilla"
+}
