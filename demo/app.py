@@ -190,8 +190,8 @@ st.markdown(f"""
 
 # ========== TÍTULO PRINCIPAL ==========
 st.markdown('<h1 class="titulo-principal">Simulación de Evaluación Temprana de Rotación de Empleados</h1>', unsafe_allow_html=True)
-st.markdown("Responde la encuesta a los 3 meses de ingreso para simular predicción de riesgo.")
-st.markdown('<p style="color: #000000;">Este modelo no consume directamente respuestas de encuesta. La encuesta permite capturar las señales necesarias para alimentar el modelo de predicción temprana. En producción, los datos estructurales vendrían automáticamente del HRIS, y la encuesta temprana aportaría señales de riesgo que alimentan el modelo de predicción.</p>', unsafe_allow_html=True)
+st.markdown('<p style="color: #1B5E20; font-size: 1.2rem; text-align: center; margin-top: 5px;">Responde la encuesta a los 3 meses de ingreso para simular predicción de riesgo.</p>', unsafe_allow_html=True)
+st.markdown('<p style="color: #000000;">Este modelo es una simulación simplificada con las 8 principales features de la encuesta temprana (edad, antigüedad, manager, nivel de puesto y señales clave de satisfacción y burnout). No refleja exactamente el modelo completo de producción, pero permite visualizar de manera temprana el riesgo de rotación de empleados.</p>', unsafe_allow_html=True)
 
 # ========== CARGAR MODELO ==========
 model_path = "models/modelo_demo_app.pkl"
@@ -266,11 +266,26 @@ if st.button("Calcular riesgo de rotación"):
         job_level,
         overtime,
         burnout_risk,
-        job_satisfaction
+        job_satisfaction,
+        modelo=modelo  # importante para alinear columnas
     )
 
     proba = modelo.predict_proba(df_input)[:,1][0]
     riesgo = "Alto" if proba >= UMBRAL_ALTO_RIESGO else ("Medio" if proba >= 0.20 else "Bajo")
+    import matplotlib.pyplot as plt
+
+# Dentro del bloque del botón, después de calcular 'proba'
+    st.subheader("📈 Visualización del riesgo")
+    fig, ax = plt.subplots(figsize=(6, 1.5))
+    ax.barh([0], [proba], color='#D32F2F' if riesgo=="Alto" else '#FF9800' if riesgo=="Medio" else '#388E3C', height=0.5)
+    ax.set_xlim(0,1)
+    ax.set_yticks([])
+    ax.set_xticks([0, 0.25, 0.35, 0.5, 0.75, 1])
+    ax.set_xticklabels(['0%','25%','35%','50%','75%','100%'])
+    ax.axvline(0.35, color='gray', linestyle='--', alpha=0.7)  # umbral alto riesgo
+    ax.axvline(0.20, color='gray', linestyle='--', alpha=0.5)  # umbral medio riesgo
+    ax.set_title("Probabilidad de rotación")
+    st.pyplot(fig)
 
     # ========== RESULTADOS ==========
     st.subheader("📊 Resultados")
