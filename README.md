@@ -113,6 +113,6 @@ El modelo final permite:
 
 ## 👥 Autora
 
-**Susana Pérez Barroeta** - [Enlace a GitHub/LinkedIn]
+**Susana Pérez Barroeta** - [[Enlace a GitHub_proyecto_rotacion_personal](https://github.com/susana-PB/GitHub_proyecto_rotacion_personal)]
 
 *Última actualización: Enero 2026*
