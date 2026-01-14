@@ -82,7 +82,7 @@ proyecto_rotacion_personal/
 
 1.  **Clonar el repositorio:**
     ```bash
-    git clone git clone https://github.com/tu-usuario/proyecto_rotacion_personal.git 
+    git clone https://github.com/tu-usuario/proyecto_rotacion_personal.git 
     cd employee-attrition-prediction
     ```
 
