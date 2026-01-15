@@ -2,6 +2,7 @@ import streamlit as st
 import joblib
 from functions import map_inputs
 import base64
+import matplotlib.pyplot as plt
 
 # ========== CONFIGURACIÓN DE IMAGEN ==========
 # ELIGE UNA OPCIÓN:
@@ -271,13 +272,23 @@ if st.button("Calcular riesgo de rotación"):
     )
 
     proba = modelo.predict_proba(df_input)[:,1][0]
-    riesgo = "Alto" if proba >= UMBRAL_ALTO_RIESGO else ("Medio" if proba >= 0.20 else "Bajo")
-    import matplotlib.pyplot as plt
+    if proba > 0.7:
+        riesgo_modelo = "Alto"
+    elif proba >= 0.4:
+        riesgo_modelo = "Medio"
+    else:
+        riesgo_modelo = "Bajo"
+
+# Ajuste por reglas de negocio (burnout)
+    if burnout_risk >= 3 and riesgo_modelo != "Alto":
+        riesgo_final = "Medio"
+    else:
+        riesgo_final = riesgo_modelo
 
 # Dentro del bloque del botón, después de calcular 'proba'
     st.subheader("📈 Visualización del riesgo")
     fig, ax = plt.subplots(figsize=(6, 1.5))
-    ax.barh([0], [proba], color='#D32F2F' if riesgo=="Alto" else '#FF9800' if riesgo=="Medio" else '#388E3C', height=0.5)
+    ax.barh([0], [proba], color='#D32F2F' if riesgo_final=="Alto" else '#FF9800' if riesgo_final=="Medio" else '#388E3C', height=0.5)
     ax.set_xlim(0,1)
     ax.set_yticks([])
     ax.set_xticks([0, 0.25, 0.35, 0.5, 0.75, 1])
@@ -289,9 +300,29 @@ if st.button("Calcular riesgo de rotación"):
 
     # ========== RESULTADOS ==========
     st.subheader("📊 Resultados")
-    st.markdown(f'<p style="color: #000000; font-size: 16px; margin: 15px 0;"><strong>Probabilidad de rotación:</strong> <code style="background: #000000; padding: 4px 8px; border-radius: 4px;">{proba:.1%}</code></p>', unsafe_allow_html=True)
-    st.markdown(f'<p style="color: #000000; font-size: 16px; margin: 15px 0;"><strong>Nivel de riesgo:</strong> <code style="background: #000000; padding: 4px 8px; border-radius: 4px;">{riesgo}</code></p>', unsafe_allow_html=True)
-    
+    st.markdown(
+        f'<p style="color: #000000; font-size: 16px; margin: 15px 0;">'
+        f'<strong>Probabilidad de rotación (Modelo ML):</strong> '
+        f'<code style="background: #000000; padding: 4px 8px; border-radius: 4px;">'
+        f'{proba:.1%}</code></p>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f'<p style="color: #000000; font-size: 16px; margin: 15px 0;">'
+        f'<strong>Nivel de riesgo por modelo ML:</strong> '
+        f'<code style="background: #000000; padding: 4px 8px; border-radius: 4px;">'
+        f'{riesgo_modelo}</code></p>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        f'<p style="color: #000000; font-size: 16px; margin: 15px 0;">'
+        f'<strong>Nivel de riesgo final (modelo + reglas HR):</strong> '
+        f'<code style="background: #000000; padding: 4px 8px; border-radius: 4px;">'
+        f'{riesgo_final}</code></p>',
+        unsafe_allow_html=True
+    )
     # ========== INSIGHT SOBRE BURNOUT (solo si aplica) ==========
     if burnout_risk >= 4:
         st.markdown(f'''
@@ -328,7 +359,7 @@ if st.button("Calcular riesgo de rotación"):
         ''', unsafe_allow_html=True)
     
     st.subheader("💡 Recomendaciones")
-    if riesgo=="Alto":
+    if riesgo_final=="Alto":
         st.markdown(f'''
         <div style="
             color: #000000; 
@@ -349,7 +380,7 @@ if st.button("Calcular riesgo de rotación"):
         </ul>
         </div>
         ''', unsafe_allow_html=True)
-    elif riesgo=="Medio":
+    elif riesgo_final=="Medio":
         st.markdown(f'''
         <div style="
             color: #000000; 
